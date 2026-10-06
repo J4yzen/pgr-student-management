@@ -1,0 +1,98 @@
+@model IEnumerable<PgrStudentManagement.Web.Models.Student>
+
+@{
+    ViewData["Title"] = "Students";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-1">Postgraduate Research Students</h1>
+            <p class="text-muted mb-0">Manage student enrolments, academic statuses, and thesis milestones.</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Student Number</th>
+                            <th>Full Name</th>
+                            <th>Programme</th>
+                            <th>Status</th>
+                            <th class="text-end pe-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-semibold">@student.StudentNumber</td>
+                                <td>@student.FullName</td>
+                                <td>@(student.Course ?? "N/A")</td>
+                                <td>
+                                    <span class="badge @(student.Status switch {
+                                        PgrStudentManagement.Web.Models.Status.Researching => "bg-primary",
+                                        PgrStudentManagement.Web.Models.Status.WritingUp => "bg-info text-dark",
+                                        PgrStudentManagement.Web.Models.Status.Submitted => "bg-success",
+                                        PgrStudentManagement.Web.Models.Status.Corrections => "bg-warning text-dark",
+                                        PgrStudentManagement.Web.Models.Status.Completed => "bg-dark",
+                                        PgrStudentManagement.Web.Models.Status.Suspended => "bg-secondary",
+                                        PgrStudentManagement.Web.Models.Status.Withdrawn => "bg-danger",
+                                        _ => "bg-light text-dark"
+                                    })">
+                                        @student.Status
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="EnrolmentDetails"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-primary"
+                                           title="View Enrolment Details (W2-UC01)">
+                                            Enrolment
+                                        </a>
+                                        <a asp-action="ThesisDetails"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-secondary"
+                                           title="View Thesis Details (W2-UC02)">
+                                            Thesis
+                                        </a>
+                                        <a asp-action="EditStatus"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-info"
+                                           title="Edit Student Status (W2-UC03)">
+                                            Status
+                                        </a>
+                                        <a asp-action="EditExpectedSubmissionDate"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-warning"
+                                           title="Edit Expected Date (W2-UC04)">
+                                            Expected Date
+                                        </a>
+                                        <a asp-action="RecordSubmission"
+                                           asp-route-studentNumber="@student.StudentNumber"
+                                           class="btn btn-outline-success"
+                                           title="Record Thesis Submission (W2-UC05)">
+                                            Record Submission
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

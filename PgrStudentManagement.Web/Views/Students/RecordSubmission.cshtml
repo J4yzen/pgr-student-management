@@ -1,0 +1,74 @@
+@model PgrStudentManagement.Web.Models.Student
+
+@{
+    ViewData["Title"] = "Record Actual Thesis Submission";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h2 mb-1">Record Actual Thesis Submission</h1>
+            <p class="text-muted mb-0">Record submission milestone and update status to Submitted for @Model.FullName (@Model.StudentNumber)</p>
+        </div>
+        <div>
+            <a asp-action="ThesisDetails" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-outline-secondary btn-sm">Cancel</a>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger" role="alert">
+            <h5 class="alert-heading fw-bold mb-1">Submission Error</h5>
+            <div asp-validation-summary="All" class="text-danger mb-0"></div>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form asp-action="RecordSubmission" method="post">
+                <input type="hidden" name="studentNumber" value="@Model.StudentNumber" />
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Student</label>
+                    <input type="text" class="form-control" value="@Model.FullName (@Model.StudentNumber)" readonly disabled />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Thesis Title</label>
+                    <input type="text" class="form-control" value="@(Model.ThesisTitle ?? "Not recorded")" readonly disabled />
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Current Status</label>
+                        <input type="text" class="form-control" value="@Model.Status" readonly disabled />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted">Expected Submission Date</label>
+                        <input type="text" class="form-control"
+                               value="@(Model.ExpectedSubmissionDate.HasValue ? Model.ExpectedSubmissionDate.Value.ToString("dd/MM/yyyy") : "Not recorded")"
+                               readonly disabled />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="actualSubmissionDate" class="form-label fw-bold">Actual Submission Date</label>
+                    <input type="date"
+                           id="actualSubmissionDate"
+                           name="actualSubmissionDate"
+                           class="form-control"
+                           value="@(Model.ActualSubmissionDate.HasValue ? Model.ActualSubmissionDate.Value.ToString("yyyy-MM-dd") : DateTime.Today.ToString("yyyy-MM-dd"))"
+                           required />
+                    <div class="form-text text-muted">
+                        Submitting this form will record the actual submission date and automatically change the student's status to <strong>Submitted</strong>.
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">Record Submission</button>
+                    <a asp-action="ThesisDetails" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+@model PgrStudentManagement.Web.Models.Student
+
+@{
+    ViewData["Title"] = "Thesis Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="h2 mb-1">Thesis Details</h1>
+            <p class="text-muted mb-0">Thesis and milestone information for @Model.FullName (@Model.StudentNumber)</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">← Back to Students</a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.HasThesisInformation)
+    {
+        <div class="alert alert-warning shadow-sm border-warning" role="alert">
+            <h4 class="alert-heading fw-bold mb-2">Thesis information not available</h4>
+            <p class="mb-0">
+                The student record for <strong>@Model.FullName (@Model.StudentNumber)</strong> exists, but no thesis information has been recorded yet.
+            </p>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Student Status</dt>
+                    <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Status</span></dd>
+                </dl>
+            </div>
+            <div class="card-footer bg-light d-flex gap-2">
+                <a asp-action="EditExpectedSubmissionDate" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-warning btn-sm">
+                    Set Expected Submission Date
+                </a>
+                <a asp-action="EnrolmentDetails" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-outline-secondary btn-sm">
+                    View Enrolment Details
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0 fw-bold text-primary">Thesis & Milestone Details</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4 text-muted">Thesis Title</dt>
+                    <dd class="col-sm-8 fw-semibold">
+                        @(string.IsNullOrWhiteSpace(Model.ThesisTitle) ? "Not recorded" : Model.ThesisTitle)
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Expected Submission Date</dt>
+                    <dd class="col-sm-8">
+                        @(Model.ExpectedSubmissionDate.HasValue ? Model.ExpectedSubmissionDate.Value.ToString("dd/MM/yyyy") : "Not recorded")
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Original Expected Date</dt>
+                    <dd class="col-sm-8">
+                        @(Model.OriginalExpectedSubmissionDate.HasValue ? Model.OriginalExpectedSubmissionDate.Value.ToString("dd/MM/yyyy") : "Not recorded")
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Actual Submission Date</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.ActualSubmissionDate.HasValue)
+                        {
+                            <span class="text-success fw-semibold">@Model.ActualSubmissionDate.Value.ToString("dd/MM/yyyy")</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not recorded (Pending)</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4 text-muted">Current Student Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge @(Model.Status switch {
+                            PgrStudentManagement.Web.Models.Status.Researching => "bg-primary",
+                            PgrStudentManagement.Web.Models.Status.WritingUp => "bg-info text-dark",
+                            PgrStudentManagement.Web.Models.Status.Submitted => "bg-success",
+                            PgrStudentManagement.Web.Models.Status.Corrections => "bg-warning text-dark",
+                            PgrStudentManagement.Web.Models.Status.Completed => "bg-dark",
+                            PgrStudentManagement.Web.Models.Status.Suspended => "bg-secondary",
+                            PgrStudentManagement.Web.Models.Status.Withdrawn => "bg-danger",
+                            _ => "bg-light text-dark"
+                        })">
+                            @Model.Status
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+            <div class="card-footer bg-light d-flex gap-2">
+                <a asp-action="EditExpectedSubmissionDate" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-warning btn-sm">
+                    Edit Expected Date
+                </a>
+                <a asp-action="RecordSubmission" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-success btn-sm">
+                    Record Submission
+                </a>
+                <a asp-action="EnrolmentDetails" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-outline-secondary btn-sm">
+                    View Enrolment
+                </a>
+            </div>
+        </div>
+    }
+</div>
