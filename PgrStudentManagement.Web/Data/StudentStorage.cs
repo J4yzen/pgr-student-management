@@ -49,6 +49,20 @@ public class StudentStorage
     }
     public void UpdateStudent(Student student)
     {
-        throw new NotImplementedException();
+        if (student is null)
+            throw new ArgumentNullException(nameof(student));
+
+        if (string.IsNullOrWhiteSpace(student.StudentNumber))
+            throw new ArgumentException("Student number is required.", nameof(student));
+
+        ArgumentNullException.ThrowIfNull(student);
+        
+        var index = _students.FindIndex(s =>
+            s.StudentNumber.Equals(student.StudentNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        if (index >= 0)
+        {
+            _students[index] = student;
+        }
     }
 }
